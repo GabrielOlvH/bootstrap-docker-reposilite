@@ -11,7 +11,13 @@
     "healthcheckPath": "/api/status/head",
     "healthcheckPort": 8080,
     "healthcheckTimeout": 120,
-    "healthcheckInterval": 30
+    "healthcheckInterval": 30,
+    "volumes": [
+      {
+        "mountPath": "/app/data",
+        "name": "reposilite-data"
+      }
+    ]
   },
   "variables": {
     "REPOSILITE_INITIAL_ADMIN_USER": {
