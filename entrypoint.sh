@@ -41,5 +41,5 @@ else
 fi
 
 # Execute the original Reposilite entrypoint/command
-# The official Reposilite image has its entrypoint at /app/bin/reposilite
-exec /app/bin/reposilite
+# Corrected path to the Reposilite executable
+exec /app/reposilite
