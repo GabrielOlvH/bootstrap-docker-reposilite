@@ -3,8 +3,7 @@
 FROM dzikoysk/reposilite:latest
 
 # Environment variables for the initial admin user and password.
-# These values are defaults and SHOULD BE OVERRIDDEN in your Railway deployment settings
-# for security.
+# These will be overridden by Railway's environment variable settings.
 ENV REPOSILITE_INITIAL_ADMIN_USER="admin"
 ENV REPOSILITE_INITIAL_ADMIN_PASSWORD="password"
 
@@ -17,9 +16,9 @@ RUN chmod +x /app/entrypoint.sh
 # Set the custom entrypoint script to run when the container starts
 ENTRYPOINT ["/app/entrypoint.sh"]
 
-# Expose the default Reposilite port (this is often already done by the base image,
-# but it's good practice to declare it)
+# Expose the default Reposilite port (already in base image, but good for clarity)
 EXPOSE 8080
 
-# Define the data volume for Reposilite data persistence (also often in base image)
-VOLUME /app/data
+# Note: The VOLUME instruction has been removed as Railway handles volumes
+# through its dashboard. You MUST configure a volume in Railway and mount
+# it to /app/data for persistence.
