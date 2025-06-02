@@ -42,4 +42,4 @@ fi
 
 # Execute the original Reposilite entrypoint/command
 # Corrected path to the Reposilite executable
-exec /app/reposilite
+exec reposilite
