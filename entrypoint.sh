@@ -3,28 +3,42 @@
 set -e
 
 # --- Configuration ---
-# These environment variables are expected to be set:
-# REPOSILITE_INITIAL_ADMIN_USER: The username for the initial admin token.
-# REPOSILITE_INITIAL_ADMIN_PASSWORD: The password for the initial admin token.
+# These environment variables are expected to be set in Railway:
+# REPOSILITE_INITIAL_ADMIN_USER (optional): The username for the initial admin token.
+# REPOSILITE_INITIAL_ADMIN_PASSWORD (optional): The password for the initial admin token.
 # REPOSILITE_OPTS (optional): Any other Reposilite options you want to pass.
 
-# Construct the initial admin token argument for Reposilite
-INITIAL_ADMIN_TOKEN_ARG="--token ${REPOSILITE_INITIAL_ADMIN_USER}:${REPOSILITE_INITIAL_ADMIN_PASSWORD}"
+# Initialize current_opts with any pre-existing REPOSILITE_OPTS
+# Uses parameter expansion: if REPOSILITE_OPTS is unset or null, default to empty string.
+current_opts="${REPOSILITE_OPTS:-}"
 
-# Combine with any existing REPOSILITE_OPTS provided by the user
-if [ -n "${REPOSILITE_OPTS}" ]; then
-  # Append the initial admin token argument to existing options
-  export REPOSILITE_OPTS="${REPOSILITE_OPTS} ${INITIAL_ADMIN_TOKEN_ARG}"
+# Check if BOTH user and password are provided and non-empty
+if [ -n "${REPOSILITE_INITIAL_ADMIN_USER}" ] && [ -n "${REPOSILITE_INITIAL_ADMIN_PASSWORD}" ]; then
+  INITIAL_ADMIN_TOKEN_ARG="--token ${REPOSILITE_INITIAL_ADMIN_USER}:${REPOSILITE_INITIAL_ADMIN_PASSWORD}"
+  echo "Configuring initial temporary admin token for user '${REPOSILITE_INITIAL_ADMIN_USER}'."
+  echo "IMPORTANT: This token is temporary. Create a persistent token via the Reposilite console/dashboard after first login."
+
+  if [ -n "${current_opts}" ]; then
+    # Append the new token argument to existing options
+    export REPOSILITE_OPTS="${current_opts} ${INITIAL_ADMIN_TOKEN_ARG}"
+  else
+    # Set REPOSILITE_OPTS to just the token argument
+    export REPOSILITE_OPTS="${INITIAL_ADMIN_TOKEN_ARG}"
+  fi
 else
-  # Set REPOSILITE_OPTS to just the initial admin token argument
-  export REPOSILITE_OPTS="${INITIAL_ADMIN_TOKEN_ARG}"
+  echo "REPOSILITE_INITIAL_ADMIN_USER and/or REPOSILITE_INITIAL_ADMIN_PASSWORD not fully provided. Skipping temporary admin token creation."
+  echo "If this is a fresh instance without existing users/tokens, you may need to configure them manually or provide these variables for initial setup."
+  # If token creation is skipped, REPOSILITE_OPTS remains as current_opts (which could be empty or user-defined)
+  export REPOSILITE_OPTS="${current_opts}"
 fi
 
 echo "Starting Reposilite..."
-echo "REPOSILITE_OPTS: ${REPOSILITE_OPTS}"
-echo "IMPORTANT: The initial token for user '${REPOSILITE_INITIAL_ADMIN_USER}' is temporary."
-echo "It's recommended to create a persistent token via the Reposilite console/dashboard after the first login."
-echo "This temporary token will be recreated with these credentials on every container start if these environment variables remain set."
+if [ -n "${REPOSILITE_OPTS}" ]; then
+  echo "Final REPOSILITE_OPTS: ${REPOSILITE_OPTS}"
+else
+  # Explicitly state if no options are being passed
+  echo "Final REPOSILITE_OPTS: (not set/empty)"
+fi
 
 # Execute the original Reposilite entrypoint/command
 # The official Reposilite image has its entrypoint at /app/bin/reposilite
