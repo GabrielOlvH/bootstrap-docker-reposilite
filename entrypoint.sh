@@ -1,15 +1,24 @@
 #!/bin/sh
 # Exit immediately if a command exits with a non-zero status.
 set -e
+echo "Listing /app directory:"
+ls -la /app
 
-# --- Configuration ---
-# These environment variables are expected to be set in Railway:
-# REPOSILITE_INITIAL_ADMIN_USER (optional): The username for the initial admin token.
-# REPOSILITE_INITIAL_ADMIN_PASSWORD (optional): The password for the initial admin token.
-# REPOSILITE_OPTS (optional): Any other Reposilite options you want to pass.
+echo "Listing /app/bin directory (if exists):"
+ls -la /app/bin || echo "/app/bin does not exist"
 
-# Initialize current_opts with any pre-existing REPOSILITE_OPTS
-# Uses parameter expansion: if REPOSILITE_OPTS is unset or null, default to empty string.
+echo "Listing /usr/local/bin directory:"
+ls -la /usr/local/bin
+
+echo "Which reposilite:"
+which reposilite || echo "reposilite not in PATH"
+
+echo "Attempting to find reposilite executable..."
+find / -name reposilite -type f -executable 2>/dev/null || echo "Could not find reposilite executable with find"
+
+# Prevent container from exiting immediately so we can see logs
+echo "Debugging complete. Exiting."
+exit 1
 current_opts="${REPOSILITE_OPTS:-}"
 
 # Check if BOTH user and password are provided and non-empty
