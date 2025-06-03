@@ -10,7 +10,8 @@ ENV REPOSILITE_INITIAL_ADMIN_PASSWORD=""
 # For UI Customizations
 ENV REPOSILITE_TITLE="Reposilite"
 ENV REPOSILITE_DESCRIPTION="A lightweight, open source Maven repository manager"
-ENV REPOSILITE_ACCENT_COLOR="#3f51b5" # Default Reposilite accent color
+ENV REPOSILITE_ACCENT_COLOR="#3f51b5"
+ # Default Reposilite accent color
 
 # For Other Reposilite Options
 ENV REPOSILITE_DEBUG="false"
