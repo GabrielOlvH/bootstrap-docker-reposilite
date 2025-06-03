@@ -15,11 +15,13 @@ ENV REPOSILITE_ACCENT_COLOR="#3f51b5"
 
 # For Other Reposilite Options
 ENV REPOSILITE_DEBUG="false"
-ENV REPOSILITE_DISABLE_SWAGGER="false" # Set to true to disable Swagger UI
+ENV REPOSILITE_DISABLE_SWAGGER="false"
+# Set to true to disable Swagger UI
 
 # For additional raw CLI options and JVM options
 ENV REPOSILITE_OPTS=""
-ENV REPOSILITE_JVM_OPTS="-Xmx1g -Xms128m" # Default JVM options
+ENV REPOSILITE_JVM_OPTS="-Xmx1g -Xms128m"
+# Default JVM options
 
 # Copy the custom entrypoint script into the image
 # The base image's WORKDIR is /app
