@@ -12,7 +12,8 @@ ENV REPOSILITE_DEBUG="false"
 
 # For additional raw CLI options and JVM options
 ENV REPOSILITE_OPTS=""
-ENV REPOSILITE_JVM_OPTS="-Xmx1g -Xms128m" # Default JVM options
+ENV REPOSILITE_JVM_OPTS="-Xmx1g -Xms128m" 
+# Default JVM options
 
 # Copy the custom entrypoint script into the image
 # The base image's WORKDIR is /app
