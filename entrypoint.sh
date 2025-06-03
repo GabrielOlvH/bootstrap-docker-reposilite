@@ -1,33 +1,61 @@
 #!/bin/sh
-# Exit immediately if a command exits with a non-zero status.
 set -e
 
+# Prepare arguments for Reposilite
+REPOSILITE_ARGS=""
 
-combined_opts="${REPOSILITE_OPTS:-}"
+# --- UI Customization Options ---
+if [ -n "${REPOSILITE_TITLE}" ]; then
+  REPOSILITE_ARGS="${REPOSILITE_ARGS} --title=\"${REPOSILITE_TITLE}\""
+fi
+if [ -n "${REPOSILITE_DESCRIPTION}" ]; then
+  REPOSILITE_ARGS="${REPOSILITE_ARGS} --description=\"${REPOSILITE_DESCRIPTION}\""
+fi
+if [ -n "${REPOSILITE_ACCENT_COLOR}" ]; then
+  REPOSILITE_ARGS="${REPOSILITE_ARGS} --accent-color=\"${REPOSILITE_ACCENT_COLOR}\""
+fi
 
-# Check if BOTH user and password are provided and non-empty
+# --- Other Reposilite Options ---
+if [ "${REPOSILITE_DEBUG}" = "true" ]; then
+  REPOSILITE_ARGS="${REPOSILITE_ARGS} --debug"
+fi
+if [ "${REPOSILITE_DISABLE_SWAGGER}" = "true" ]; then
+  REPOSILITE_ARGS="${REPOSILITE_ARGS} --disable-swagger"
+fi
+
+# --- Append user-provided raw REPOSILITE_OPTS ---
+# User is responsible for correct quoting within this string if needed.
+if [ -n "${REPOSILITE_OPTS}" ]; then
+  REPOSILITE_ARGS="${REPOSILITE_ARGS} ${REPOSILITE_OPTS}"
+fi
+
+# --- Initial Admin Token (Optional) ---
 if [ -n "${REPOSILITE_INITIAL_ADMIN_USER}" ] && [ -n "${REPOSILITE_INITIAL_ADMIN_PASSWORD}" ]; then
-  INITIAL_ADMIN_TOKEN_ARG="--token ${REPOSILITE_INITIAL_ADMIN_USER}:${REPOSILITE_INITIAL_ADMIN_PASSWORD}"
+  # Token format is name:secret, no spaces expected in user or pass here.
+  # Using --token=value syntax
+  REPOSILITE_ARGS="${REPOSILITE_ARGS} --token=${REPOSILITE_INITIAL_ADMIN_USER}:${REPOSILITE_INITIAL_ADMIN_PASSWORD}"
   echo "Configuring initial temporary admin token for user '${REPOSILITE_INITIAL_ADMIN_USER}'."
   echo "IMPORTANT: This token is temporary. Create a persistent token via the Reposilite console/dashboard after first login."
-
-  if [ -n "${combined_opts}" ]; then
-    # Append the new token argument to existing options
-    combined_opts="${combined_opts} ${INITIAL_ADMIN_TOKEN_ARG}"
-  else
-    # Set combined_opts to just the token argument
-    combined_opts="${INITIAL_ADMIN_TOKEN_ARG}"
-  fi
 else
   echo "REPOSILITE_INITIAL_ADMIN_USER and/or REPOSILITE_INITIAL_ADMIN_PASSWORD not fully provided. Skipping temporary admin token creation."
   echo "If this is a fresh instance without existing users/tokens, you may need to configure them manually or provide these variables for initial setup."
 fi
 
 echo "Starting Reposilite..."
-if [ -n "${combined_opts}" ]; then
-  echo "Final application arguments: ${combined_opts}"
+if [ -n "${REPOSILITE_ARGS}" ]; then
+  # Trim leading/trailing whitespace from REPOSILITE_ARGS for cleaner logging
+  REPOSILITE_ARGS_TRIMMED=$(echo "${REPOSILITE_ARGS}" | awk '{$1=$1};1')
+  echo "Final application arguments: ${REPOSILITE_ARGS_TRIMMED}"
 else
-  echo "Final application arguments: (none)"
+  echo "No application arguments."
 fi
 
-exec java -jar /app/reposilite.jar ${combined_opts}
+# --- JVM Options ---
+# Use user-defined REPOSILITE_JVM_OPTS or fallback to a default.
+FINAL_JVM_OPTS="${REPOSILITE_JVM_OPTS:--Xmx1g -Xms128m}"
+echo "Using JVM options: ${FINAL_JVM_OPTS}"
+
+# Execute Reposilite using java -jar
+# Word splitting of FINAL_JVM_OPTS and REPOSILITE_ARGS is intended by the shell.
+# shellcheck disable=SC2086
+exec java ${FINAL_JVM_OPTS} -jar /app/reposilite.jar ${REPOSILITE_ARGS}
