@@ -17,18 +17,48 @@
   },
   "variables": {
     "REPOSILITE_INITIAL_ADMIN_USER": {
-      "description": "Optional: The username for the initial Reposilite admin token (e.g., 'admin', 'root'). Both user and password must be set to create the token.",
+      "description": "Optional: Username for the initial Reposilite admin token. Both user and password must be set to create the token. Example: 'root'",
       "default": "",
       "required": false
     },
     "REPOSILITE_INITIAL_ADMIN_PASSWORD": {
-      "description": "Optional: A STRONG password for the initial Reposilite admin token. Both user and password must be set to create the token.",
+      "description": "Optional: A STRONG password for the initial admin token. Both user and password must be set. Example: 'StrongSecret123!'",
       "default": "",
       "required": false
     },
+    "REPOSILITE_TITLE": {
+      "description": "Optional: Custom title for the Reposilite web interface. Example: 'My Company Artifacts'",
+      "default": "Reposilite",
+      "required": false
+    },
+    "REPOSILITE_DESCRIPTION": {
+      "description": "Optional: Custom description for the Reposilite web interface. Example: 'Private Maven repository'",
+      "default": "A lightweight, open source Maven repository manager",
+      "required": false
+    },
+    "REPOSILITE_ACCENT_COLOR": {
+      "description": "Optional: Custom accent color for the UI (hex code). Example: '#FF5733'",
+      "default": "#3f51b5",
+      "required": false
+    },
+    "REPOSILITE_DEBUG": {
+      "description": "Optional: Enable debug logging for Reposilite. Set to 'true' or 'false'.",
+      "default": "false",
+      "required": false
+    },
+    "REPOSILITE_DISABLE_SWAGGER": {
+      "description": "Optional: Disable the Swagger UI for the API. Set to 'true' or 'false'.",
+      "default": "false",
+      "required": false
+    },
     "REPOSILITE_OPTS": {
-      "description": "Optional: Additional command-line arguments for Reposilite (e.g., '--title \"My Awesome Repo\"').",
+      "description": "Optional: Advanced - Additional raw command-line arguments for Reposilite. Use with caution. Example: '--disable-frontend'",
       "default": "",
+      "required": false
+    },
+    "REPOSILITE_JVM_OPTS": {
+      "description": "Optional: Advanced - JVM options for running Reposilite. Example: '-Xmx2g -Xms256m'",
+      "default": "-Xmx1g -Xms128m",
       "required": false
     }
   }
